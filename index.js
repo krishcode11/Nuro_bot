@@ -6,6 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const { NewMessage } = require('telegram/events');
 const axios = require('axios');
+const keep_alive = require('./keep_alive.js')
 
 // Import our conversion module
 const LinkConverter = require('./conversion');
