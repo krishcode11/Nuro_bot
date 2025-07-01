@@ -80,23 +80,14 @@ const PROMOTIONAL_MESSAGES = [
     "\n\n⚡ Flash Shopping! Heavy Discounts, Light Prices! 💨\n🔥 Daily deals that save your money! Join today! 💸"
 ];
 
-// Send message to @earnpe_converter1_bot
-async function forwardToEarnpeBot(client, message, media = null) {
+// Update forwardToEarnpeBot to only send text messages
+async function forwardToEarnpeBot(client, message) {
     try {
         await rateLimitedDelay();
-        if (media) {
-            await client.sendFile(CONFIG.EARNPE_BOT_USERNAME, {
-                file: media.file || media, // support both Buffer and {file, filename}
-                caption: message,
-                parseMode: 'html',
-                ...(media.filename ? { fileName: media.filename } : {})
-            });
-        } else {
-            await client.sendMessage(CONFIG.EARNPE_BOT_USERNAME, {
-                message: message,
-                parseMode: 'html'
-            });
-        }
+        await client.sendMessage(CONFIG.EARNPE_BOT_USERNAME, {
+            message: message,
+            parseMode: 'html'
+        });
         log('✅ Message sent to @earnpe_converter1_bot');
     } catch (error) {
         log(`❌ Failed to send to @earnpe_converter1_bot: ${error.message}`, 'ERROR');
@@ -165,22 +156,7 @@ async function startForwardBot() {
                 if (!text.includes('Heavy Discount')) {
                     text += promo;
                 }
-                let media = null;
-                if (message.media) {
-                    try {
-                        media = await downloadMedia(message, { client, workers: 1 });
-                        if (!media || (Buffer.isBuffer(media) && media.length === 0)) {
-                            log('❌ Media download failed or is empty', 'ERROR');
-                            return;
-                        }
-                        // Provide a default filename for the media
-                        await forwardToEarnpeBot(client, text, { file: media, filename: 'photo.jpg' });
-                        return;
-                    } catch (e) {
-                        log(`❌ Failed to download/send media: ${e.message}`, 'ERROR');
-                    }
-                }
-                await forwardToEarnpeBot(client, text, null);
+                await forwardToEarnpeBot(client, text);
             } catch (error) {
                 log(`❌ Error processing message: ${error.message}`, 'ERROR');
             }
