@@ -1,5 +1,5 @@
 node_modules/
-.env
+
 *.log
 conversion.log
 deal_bot_session.txt
