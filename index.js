@@ -94,6 +94,20 @@ async function forwardToEarnpeBot(client, message) {
     }
 }
 
+// Add this function to send to EarnKaro bot
+async function forwardToEarnkaroBot(client, message) {
+    const earnkaroBot = process.env.EARNKARO_BOT_USERNAME || '@ekconverter9bot';
+    try {
+        await client.sendMessage(earnkaroBot, {
+            message: message,
+            parseMode: 'html'
+        });
+        log('✅ Message sent to @ekconverter9bot');
+    } catch (error) {
+        log(`❌ Failed to send to @ekconverter9bot: ${error.message}`, 'ERROR');
+    }
+}
+
 // Setup Telegram client
 async function setupClient() {
     const sessionPath = path.join(__dirname, 'deal_bot_session.txt');
@@ -157,6 +171,7 @@ async function startForwardBot() {
                     text += promo;
                 }
                 await forwardToEarnpeBot(client, text);
+                await forwardToEarnkaroBot(client, text);
             } catch (error) {
                 log(`❌ Error processing message: ${error.message}`, 'ERROR');
             }
@@ -172,4 +187,5 @@ async function startForwardBot() {
 
 if (require.main === module) {
     startForwardBot();
+
 }
